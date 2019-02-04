@@ -1,11 +1,13 @@
+<!-- introduction start! -->
 <div id="home">
   <div class="landing-text">
     <h6 class="subtitle">A scotland yard tool</h6>
     <h2 class="h1">Landing</h2>
   </div>
 </div>
-
-
+<!-- introduction end -->
+<!-- Section CEO Start -->
+<% politician_boss = nil %>
 <section class="section-politicians" id="section-ceo">
   <div class="row justify-content-center text-center">
     <div class="col-lg-8">
@@ -15,20 +17,25 @@
   </div>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-8 col-xs-12">
+      <div class="col-lg-4 col-md-4 col-xs-12">
         <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
+          <% @politicians.each do |politician|%>
+            <% if politician.superior.nil? && !politician.is_locked? %>
+              <% politician_boss = politician %>
+              <h2><%= politician.name %></h2>
+              <p><%= pluralize(politician.active_relationships.count, 'subordinate') %></p>
+              <%= link_to 'Know more', politician_path(politician) %>
+            <% end %>
+          <% end %>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-
-
-
+<!-- Section CEO end -->
+<!-- section Thugs start -->
+<% politicians_ids =  [] %>
 <section class="section-politicians" id="section-thugs">
   <div class="row justify-content-center text-center">
     <div class="col-lg-8">
@@ -37,41 +44,23 @@
     </div>
   </div>
   <div class="container">
-    <div class="row">
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
+    <div class="row justify-content-center ">
+      <% politician_boss.active_relationships.each do |relationship|  %>
+        <div class="col-lg-3 col-md-6 col-xs-12">
+          <div class="politician-stat">
+            <% politicians_ids << relationship.subordinate_id %>
+            <h2><%= relationship.subordinate.name %></h2>
+            <p><%= pluralize(relationship.subordinate.active_relationships.count, 'subordinate') %></p>
+            <%= link_to 'Know more', politician_path(relationship.subordinate) %>
+          </div>
         </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </section>
-
-
-
+<!-- section thugs end -->
+<!-- section politicians start -->
+<% subordinates_ids = [] %>
 <section class="section-politicians" id="section-politicians">
   <div class="row justify-content-center text-center">
     <div class="col-lg-8">
@@ -81,127 +70,46 @@
   </div>
   <div class="container">
     <div class="row">
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
+      <% politicians_ids.each do |id| %>
+        <% Politician.find(id).active_relationships.each do |relationship| %>
+          <% subordinates_ids << relationship.subordinate_id %>
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="politician-stat">
+              <h2><%= relationship.subordinate.name %></h2>
+              <p><%= relationship.subordinate.active_relationships.count %></p>
+              <%= link_to 'Know more'%>
+           </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
+  </div>
+</section>
 
-    <div class="row">
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
+
+<section class="section-politicians" id="section-politicians">
+  <div class="row justify-content-center text-center">
+    <div class="col-lg-8">
+      <h6 class="subtitle">the low Fish</h6>
+      <h2 class="h1">Who aspire to be someone...one day.</h2>
     </div>
-
+  </div>
+  <div class="container">
     <div class="row">
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="politician-stat">
-          <h2>Donald Trump</h2>
-          <p>27 Subordinates</p>
-          <%= link_to 'Know more'%>
-        </div>
-      </div>
+
+      <% subordinates_ids.each do |id| %>
+        <% Politician.find(id).active_relationships.each do |relationship| %>
+          <% subordinates_ids << relationship.subordinate_id %>
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="politician-stat">
+              <h2><%= relationship.subordinate.name %></h2>
+              <p><%= relationship.subordinate.active_relationships.count %></p>
+              <%= link_to 'Know more'%>
+           </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </section>
