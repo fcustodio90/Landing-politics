@@ -1,5 +1,5 @@
 class PoliticiansController < ApplicationController
-  before_action :set_politician, only: [:show, :lock]
+  before_action :set_politician, only: [:show, :lock, :unlock]
 
   def index
     @politicians = Politician.all
@@ -15,7 +15,8 @@ class PoliticiansController < ApplicationController
   end
 
   def unlock
-
+    @politician.recover_state
+    redirect_to root_path
   end
 
 
