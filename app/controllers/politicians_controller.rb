@@ -1,5 +1,5 @@
 class PoliticiansController < ApplicationController
-  before_action :set_politician, only: [:show, :lock :unlock]
+  before_action :set_politician, only: [:show, :lock, :unlock]
 
   def index
     @politicians = Politician.all

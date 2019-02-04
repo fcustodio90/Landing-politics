@@ -45,9 +45,9 @@ class Politician < ApplicationRecord
     # for the first time the politician will have no events
     if self.events_empty?
       # create a locked event
-      event_locked
       # call the set_locked method
       set_locked
+      event_locked
     else
       # call set_locked and event locked if self IS NOT locked
       set_locked && event_locked if !self.is_locked?
