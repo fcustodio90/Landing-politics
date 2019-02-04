@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700');
+// fonts
+$base-font: 'Lato', sans-serif;
+
+$primary-color: #3BBCB0;
+$secondary-color: #5D1C4E;
+
+
+html, body {
+  height: 100%;
+}
+
+h1, .h1,
+h2, .h2,
+h6, .h6 {
+  font-weight: 700;
+  color: $primary-color;
+  font-family: $base-font }
+
+p {
+  font-family: $base-font;
+  font-weight: 400;
+  color: $secondary-color;
+}
+
+a {
+  font-family: $base-font;
+  font-weight: 400;
+  color: $secondary-color;
+}
