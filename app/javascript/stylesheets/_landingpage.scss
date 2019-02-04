@@ -18,11 +18,13 @@ h6, .h6 {
   font-family: $base-font }
 
 p {
+  font-family: $base-font;
   font-weight: 400;
   color: $secondary-color;
 }
 
 a {
+  font-family: $base-font;
   font-weight: 400;
   color: $secondary-color;
 }
@@ -65,7 +67,7 @@ a {
 
 }
 
-#section-politicians {
+.section-politicians {
   padding-top: 40px;
   background-color: #FAFAFA;
 
@@ -106,12 +108,18 @@ a {
     }
 
     a {
+      font-size: 70%;
       text-decoration: none;
+      &:hover {
+        color: $primary-color;
+      }
+    }
+
+    &:hover {
+      border: 1.2px solid $secondary-color;
     }
 }
 
-
-
-
-
-
+#section-thugs {
+  background-color: white;
+}
