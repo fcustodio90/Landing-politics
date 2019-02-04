@@ -1,20 +1,117 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700');
+// fonts
+$base-font: 'Lato', sans-serif;
+
+$primary-color: #3BBCB0;
+$secondary-color: #5D1C4E;
 
 
-header {
-  background-image: url("https://fjjariego.files.wordpress.com/2014/01/lincoln-movie-wallpaper-2012.jpg");
-  height: 100vh;
+html, body {
+  height: 100%;
+}
+
+h1, .h1,
+h2, .h2,
+h6, .h6 {
+  font-weight: 700;
+  color: $primary-color;
+  font-family: $base-font }
+
+p {
+  font-weight: 400;
+  color: $secondary-color;
+}
+
+a {
+  font-weight: 400;
+  color: $secondary-color;
+}
+
+#home {
+  background: url("https://fjjariego.files.wordpress.com/2014/01/lincoln-movie-wallpaper-2012.jpg") no-repeat center center fixed;
+  display: table;
+  height: 100%;
+  position: relative;
+  width: 100%;
   background-size: cover;
+  opacity: 0.7;
 }
 
 
-.subtitle{
+.landing-text {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+
+  .h1 {
+    font-size: 100%;
+    letter-spacing: 8px;
     text-transform: uppercase;
-    font-size: 13px;
+    &:after {
+      content: ".politics";
+      color: $secondary-color;
+    }
+  }
+
+  .subtitle{
+    text-transform: uppercase;
+    font-size: 100%;
     color: #2c2c2c;
     font-weight: 400;
     letter-spacing: 6px;
     position: relative;
     padding-top: 10px;
+  }
+
 }
+
+#section-politicians {
+  padding-top: 40px;
+  background-color: #FAFAFA;
+
+  .h1 {
+    font-size: 100%;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+  }
+
+    .subtitle{
+    text-transform: uppercase;
+    font-size: 100%;
+    color: #2c2c2c;
+    font-weight: 400;
+    letter-spacing: 6px;
+    position: relative;
+    padding-top: 10px;
+  }
+
+}
+
+.politician-stat {
+    padding:55px 20px;
+    text-align: center;
+    margin: 65px 0px 30px 0px;
+    border:1px solid rgba(0,0,0,0.07);
+
+    h2 {
+      text-transform: uppercase;
+      font-size: 100%;
+
+    }
+
+    p{
+        letter-spacing: 2px;
+        margin-bottom: 0px;
+        font-size: 70%;
+    }
+
+    a {
+      text-decoration: none;
+    }
+}
+
+
+
+
 
 
