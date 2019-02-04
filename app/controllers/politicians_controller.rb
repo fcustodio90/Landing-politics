@@ -4,5 +4,6 @@ class PoliticiansController < ApplicationController
   end
 
   def show
+    raise
   end
 end
