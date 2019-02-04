@@ -15,6 +15,7 @@
       font-size: 100%;
       letter-spacing: 8px;
       text-transform: uppercase;
+      margin-bottom: 20px;
     }
     .subtitle{
       text-transform: uppercase;
@@ -24,6 +25,22 @@
       letter-spacing: 6px;
       position: relative;
       padding-top: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      margin-top: 10px;
+      font-family: $base-font;
+      font-weight: 500;
+      color: $secondary-color;
+      &:hover {
+        color: $primary-color;
+      }
+    }
+
+    .button_to {
+      margin-bottom: 20px;
+      font-family: $base-font !important;
     }
   }
 }
