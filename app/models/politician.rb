@@ -80,13 +80,17 @@ class Politician < ApplicationRecord
           sub_ids << subordinate.subordinate_id
         end
 
-        sub_ids.each do |subordinate|
+        if sub_ids.empty?
+          OldReplica.create(superior: superior_id, subordinate: nil, politician_id: self.id)
+        else
+          sub_ids.each do |subordinate|
 
-          # Initiate the OldReplica Construtor
-          # this will serve as a way to replicate the relationships before
-          # destroying them  from the Relationship model
-          OldReplica.create(superior: superior_id,
-                            subordinate: subordinate, politician_id: self.id)
+            # Initiate the OldReplica Construtor
+            # this will serve as a way to replicate the relationships before
+            # destroying them  from the Relationship model
+            OldReplica.create(superior: superior_id,
+                              subordinate: subordinate, politician_id: self.id)
+          end
         end
 
         # destroy all relationships associated with the object
@@ -144,9 +148,13 @@ class Politician < ApplicationRecord
         superior_id = nil
 
         OldReplica.where(politician: self).each do |replica|
-          if !Politician.find(replica.subordinate).is_locked?
-            sub_ids << replica.subordinate
+          if replica.subordinate.nil?
             superior_id = replica.superior
+          else
+            if !Politician.find(replica.subordinate).is_locked?
+              sub_ids << replica.subordinate
+              superior_id = replica.superior
+            end
           end
         end
 
