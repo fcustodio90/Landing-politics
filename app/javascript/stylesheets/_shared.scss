@@ -28,3 +28,24 @@ a {
   font-weight: 400;
   color: $secondary-color;
 }
+
+.btn {
+  line-height: 2rem;
+    border: 2px solid $border-color;
+    padding: 0px 40px;
+    border-radius: 50px;
+    text-transform: capitalize;
+    transition: all .7s ease;
+    margin-right: 5px;
+}
+
+.btn-hero{
+  background: $primary-color;
+  color: $white;
+  border-color: $primary-color;
+  &:hover{
+    background: $secondary-color;
+      border-color:$secondary-color;
+      color:$white;
+  }
+}
