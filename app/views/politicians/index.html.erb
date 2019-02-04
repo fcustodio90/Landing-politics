@@ -116,28 +116,40 @@
   </div>
 </section>
 
-<section class="section-politicians" id="locked-politicians">
-  <div class="row justify-content-center text-center">
-    <div class="col-lg-8">
-      <h6 class="subtitle">Justice served</h6>
-      <h2 class="h1">Check who is currently locked</h2>
+
+<% status_array = [] %>
+
+<% @politicians.each do |politician| %>
+   <% if !politician.events.empty? %>
+    <% status_array << politician.events.last.locked? %>
+   <% end %>
+<% end %>
+
+<% if status_array.include?(true) %>
+  <section class="section-politicians" id="locked-politicians">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-8">
+        <h6 class="subtitle">Justice served</h6>
+        <h2 class="h1">Check who is currently locked</h2>
+      </div>
     </div>
-  </div>
-  <div class="container">
-    <div class="row justify-content-center">
-      <% @politicians.each do |politician| %>
-        <% if politician.events.empty? %>
-        <% else %>
-          <% if politician.events.last.locked? %>
-            <div class="col-lg-3 col-md-6 col-xs-12">
-              <div class="politician-stat">
-                <h2><%= politician.name %></h2>
-                <%= link_to 'Know more', politician_path(politician)%>
-              </div>
-           </div>
+    <div class="container">
+      <div class="row justify-content-center">
+        <% @politicians.each do |politician| %>
+          <% if politician.events.empty? %>
+          <% else %>
+            <% if politician.events.last.locked? %>
+              <div class="col-lg-3 col-md-6 col-xs-12">
+                <div class="politician-stat">
+                  <h2><%= politician.name %></h2>
+                  <%= link_to 'Know more', politician_path(politician)%>
+                </div>
+             </div>
+            <% end %>
           <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+<% end %>
+
