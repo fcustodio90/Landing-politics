@@ -45,6 +45,13 @@
   }
 }
 
+#superior-link {
+  text-decoration: none;
+  &:hover {
+    color: #FFFFFF;
+  }
+}
+
 #section-events {
   background-color: $secondary-color;
   .subtitle {

@@ -12,6 +12,25 @@
   </div>
 </div>
 
+<% if !@politician.superior.nil? %>
+  <section class="section-politicians" id="section-ceo">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-8">
+        <h2 class="h1">Reports to</h2>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8 col-md-8 col-xs-12">
+            <% superior = @politician.superior.name %>
+            <%= link_to "#{superior}", politician_path(@politician.superior), class: 'subtitle', id: 'superior-link' %>
+        </div>
+      </div>
+    </div>
+  </section>
+<% end %>
+
+
 
 <% if !@politician.active_relationships.empty? %>
   <section class="section-politicians" id="section-subordinates">
