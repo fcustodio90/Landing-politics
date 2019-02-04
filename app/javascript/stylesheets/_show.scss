@@ -27,3 +27,20 @@
     }
   }
 }
+
+#section-events {
+  background-color: $secondary-color;
+  .subtitle {
+    color: #ffffff;
+  }
+
+  .content {
+    color: #ffffff;
+    padding-top: 30px;
+
+    p {
+      font-size: 100%;
+      color: #ffffff;
+    }
+  }
+}
