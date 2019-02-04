@@ -37,6 +37,7 @@ a {
   width: 100%;
   background-size: cover;
   opacity: 0.7;
+
 }
 
 
@@ -122,4 +123,42 @@ a {
 
 #section-thugs {
   background-color: white;
+  margin-bottom: 20px;
 }
+
+#section-ceo {
+  background-color: $secondary-color;
+  padding-bottom: 40px;
+
+  .h1 {
+    color: #FFFFFF;
+  }
+
+  .subtitle {
+    color: $primary-color
+  }
+
+  .politician-stat {
+    border: 1px solid #ffffff;
+
+    &:hover {
+      border: 1px solid $primary-color;
+    }
+
+    h2 {
+      color: #FFFFFF;
+    }
+
+    p {
+      color: #FFFFFF;
+    }
+
+    a {
+      color: $primary-color;
+      &:hover {
+        color: #FFFFFF;
+      }
+    }
+  }
+}
+
