@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 2019_02_03_234130) do
 
   create_table "politicians", force: :cascade do |t|
     t.string "name"
-    t.bigint "house_years"
+    t.date "starting_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

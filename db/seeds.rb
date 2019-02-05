@@ -1,29 +1,29 @@
 puts 'CREATING POLITICIANS'
 
 puts "--------CEO---------"
-Politician.create(name: 'trump', house_years: 23)
+Politician.create(name: 'trump', starting_date: "19/01/1955")
 
 
 puts "--------TIER 1 SUBORDINATES-----------"
-Politician.create(name: 'Obama', house_years: 43)
-Politician.create(name: 'Hillary', house_years: 27)
+Politician.create(name: 'Obama', starting_date: "05/02/1995")
+Politician.create(name: 'Hillary', starting_date: "07/03/1996")
 
 puts "--------TIER 2 SUBORDINATES-----------"
-Politician.create(name: 'ze1', house_years: 12)
-Politician.create(name: 'ze2', house_years: 11)
-Politician.create(name: 'ze3', house_years: 10)
-Politician.create(name: 'ze4', house_years: 9)
-Politician.create(name: 'ze5', house_years: 8)
-Politician.create(name: 'ze6', house_years: 7)
+Politician.create(name: 'ze1', starting_date: "03/09/1996")
+Politician.create(name: 'ze2', starting_date: "03/02/1997")
+Politician.create(name: 'ze3', starting_date: "04/03/1997")
+Politician.create(name: 'ze4', starting_date: "04/04/1997")
+Politician.create(name: 'ze5', starting_date: "05/01/1998")
+Politician.create(name: 'ze6', starting_date: "07/07/1998")
 
 puts "--------TIER  3 SUBORDINATES-----------"
 
-Politician.create(name: 'ze7', house_years: 6)
-Politician.create(name: 'ze8', house_years: 5)
-Politician.create(name: 'ze9', house_years: 4)
-Politician.create(name: 'ze10', house_years: 3)
-Politician.create(name: 'ze11', house_years: 2)
-Politician.create(name: 'ze12', house_years: 1)
+Politician.create(name: 'ze7', starting_date: "07/03/2003")
+Politician.create(name: 'ze8', starting_date: "07/05/2004")
+Politician.create(name: 'ze9', starting_date: "12/08/2004")
+Politician.create(name: 'ze10', starting_date: "21/06/2005")
+Politician.create(name: 'ze11', starting_date: "24/07/2005")
+Politician.create(name: 'ze12', starting_date: "19/08/2005")
 
 puts "CREATING RELATIONSHIPS"
 
