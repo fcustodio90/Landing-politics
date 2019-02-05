@@ -1,50 +1,45 @@
-puts 'CREATING POLITICIANS'
+x = Date.today - 10000
 
-puts "--------CEO---------"
-Politician.create(name: 'trump', starting_date: "19/01/1955")
+puts "---------Creating politicians------------"
+puts "-----------------------------------------"
+
+39.times do
+  x += 270
+  politician = Politician.create(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}", starting_date: x)
+  puts "#{politician.name}, in service since: #{politician.starting_date} created!"
+end
+
+puts "-------------#{Politician.count} politicians created---------------"
+
+puts "---------Creating Relationships------------"
+puts "-----------------------------------------"
+
+def set_relation(superior, array)
+
+  array.each do |relationship|
+    Politician.find(superior).active_relationships.create(subordinate_id: Politician.find(relationship).id)
+  end
+end
+
+array_one = (2..3).to_a
+array_two = (4..6).to_a
+array_three = (7..9).to_a
+array_four = (10..29).to_a
+array_five = (30..31).to_a
+array_six = (32..32).to_a
+array_seven = (33..36).to_a
+array_eight = (37..38).to_a
+array_nine = (39..39).to_a
 
 
-puts "--------TIER 1 SUBORDINATES-----------"
-Politician.create(name: 'Obama', starting_date: "05/02/1995")
-Politician.create(name: 'Hillary', starting_date: "07/03/1996")
+set_relation(1, array_one)
+set_relation(2, array_two)
+set_relation(3, array_three)
+set_relation(4, array_four)
+set_relation(5, array_five)
+set_relation(6, array_six)
+set_relation(7, array_seven)
+set_relation(8, array_eight)
+set_relation(9, array_nine)
 
-puts "--------TIER 2 SUBORDINATES-----------"
-Politician.create(name: 'ze1', starting_date: "03/09/1996")
-Politician.create(name: 'ze2', starting_date: "03/02/1997")
-Politician.create(name: 'ze3', starting_date: "04/03/1997")
-Politician.create(name: 'ze4', starting_date: "04/04/1997")
-Politician.create(name: 'ze5', starting_date: "05/01/1998")
-Politician.create(name: 'ze6', starting_date: "07/07/1998")
-
-puts "--------TIER  3 SUBORDINATES-----------"
-
-Politician.create(name: 'ze7', starting_date: "07/03/2003")
-Politician.create(name: 'ze8', starting_date: "07/05/2004")
-Politician.create(name: 'ze9', starting_date: "12/08/2004")
-Politician.create(name: 'ze10', starting_date: "21/06/2005")
-Politician.create(name: 'ze11', starting_date: "24/07/2005")
-Politician.create(name: 'ze12', starting_date: "19/08/2005")
-
-puts "CREATING RELATIONSHIPS"
-
-puts "CREATING TIER 1 RELATIONSHIPS"
-Politician.find(1).active_relationships.create(subordinate_id: Politician.find(2).id)
-Politician.find(1).active_relationships.create(subordinate_id: Politician.find(3).id)
-
-puts "CREATING TIER 2 RELATIONSHIPS"
-Politician.find(2).active_relationships.create(subordinate_id: Politician.find(4).id)
-Politician.find(2).active_relationships.create(subordinate_id: Politician.find(5).id)
-Politician.find(2).active_relationships.create(subordinate_id: Politician.find(6).id)
-
-Politician.find(3).active_relationships.create(subordinate_id: Politician.find(7).id)
-Politician.find(3).active_relationships.create(subordinate_id: Politician.find(8).id)
-Politician.find(3).active_relationships.create(subordinate_id: Politician.find(9).id)
-
-puts "Creating TIER 3 RELATIONSHIPS"
-
-Politician.find(4).active_relationships.create(subordinate_id: Politician.find(10).id)
-Politician.find(5).active_relationships.create(subordinate_id: Politician.find(11).id)
-Politician.find(6).active_relationships.create(subordinate_id: Politician.find(12).id)
-Politician.find(7).active_relationships.create(subordinate_id: Politician.find(13).id)
-Politician.find(8).active_relationships.create(subordinate_id: Politician.find(14).id)
-Politician.find(9).active_relationships.create(subordinate_id: Politician.find(15).id)
+puts "-------------Relationships Created---------------"
