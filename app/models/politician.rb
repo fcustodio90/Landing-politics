@@ -21,6 +21,10 @@ class Politician < ApplicationRecord
     end
   end
 
+  def subordinates_ids
+    active_relationships.pluck('subordinate_id')
+  end
+
   def event_locked
     events.create(date: Date.today, locked: true)
   end
@@ -42,27 +46,17 @@ class Politician < ApplicationRecord
   end
 
   def save_state
-    # for the first time the politician will have no events
     if self.events_empty?
-      # create a locked event
-      # call the set_locked method
       set_locked
       event_locked
     else
-      # call set_locked and event locked if self IS NOT locked
       set_locked && event_locked if !self.is_locked?
     end
   end
 
   def recover_state
-    # check if relationships are empty because they are destroyed
-    # everytime the object goes to jail
-    #                       AND
-    # check if he is indeed locked
     if self.active_relationships.empty? && self.is_locked?
-      # call the set_locked
       set_unlocked
-      # create a locked event
       event_unlocked
     end
   end
@@ -70,82 +64,67 @@ class Politician < ApplicationRecord
   private
 
       def set_locked
-        # get the superior ID
-        superior_id = self.superior.id
-        # create an empty array that will be filled with subordinates IDS
-        sub_ids = []
+        # PHASE 1 check if he is the top superior
 
-        self.active_relationships.each do |subordinate|
-          # push into the array the subordinates ids
-          sub_ids << subordinate.subordinate_id
-        end
+        if superior.nil?
+          sub_ids = self.subordinates_ids
 
-        if sub_ids.empty?
-          OldReplica.create(superior: superior_id, subordinate: nil, politician_id: self.id)
-        else
+          hierarchy_array = self.active_relationships.includes(:subordinate).order("politicians.starting_date ASC")
+
+          new_director = hierarchy_array.first.subordinate
+
+          new_oldest_subordinate = hierarchy_array.second.subordinate
+
           sub_ids.each do |subordinate|
-
-            # Initiate the OldReplica Construtor
-            # this will serve as a way to replicate the relationships before
-            # destroying them  from the Relationship model
-            OldReplica.create(superior: superior_id,
-                              subordinate: subordinate, politician_id: self.id)
+            OldReplica.create(superior: nil, subordinate: subordinate, politician_id: self.id)
           end
-        end
 
-        # destroy all relationships associated with the object
-        self.active_relationships.destroy_all
-
-        # destroy the object id(aka subordinate_id) from the superior object
-        superior.active_relationships.where(subordinate: self.id).destroy_all
-
-        # set the superior again we can't acess it via superior anymore since
-        # we just destroyed the relation. This is necessary because it makes
-        # the rest of the code cleaner
-        # set the superior again.
-        superior = Politician.find(superior_id)
-        # empty array that will be filled with subordinates house years
-        # this is a way for us to validate who shall be the next Superior
-        house_years_array = []
-
-        # check if the superior doesn't have any active relationship / subordinates
-        if superior.active_relationships.empty?
-          sub_ids.each do |id|
-            # for each subordinate ID find his house years and push
-            # into the array
-            house_years_array << Politician.find(id).house_years
-            # add those subordinates to the Superior
-            superior.add_subordinate(Politician.find(id))
+          new_director.active_relationships.each do |relationship|
+            relationship.update_attribute(:superior, new_oldest_subordinate)
           end
+
+          new_director.add_subordinate(new_oldest_subordinate)
+
+          # destroy all active relationships
+          self.active_relationships.destroy_all
         else
-          # if the superior still has direct subordinates
-          superior.active_relationships.each do |relationship|
-            # same process as before
-            house_years_array << relationship.subordinate.house_years
-          end
-
-          # start a new_director with nil
-          new_director = nil
-
-          superior.active_relationships.each do |relationship|
-            # check who has the higher house years by matching with the last value
-            # of the array
-            if relationship.subordinate.house_years == house_years_array.sort!.last
-              # save the one that will be the new director of the self subordinates
-              new_director = relationship.subordinate
+          # PHASE 2 - Destroy everything associated with self
+          # Check who is his superior
+          superior = self.superior
+          # Check who are his subordinates
+          sub_ids = self.subordinates_ids
+          # Create a replica of his superior and subordinates at the moment he is locked
+          if sub_ids.empty?
+            OldReplica.create(superior: superior.id, subordinate: nil, politician_id: self.id)
+          else
+            sub_ids.each do |subordinate|
+              OldReplica.create(superior: superior.id,
+                                subordinate: subordinate, politician_id: self.id)
             end
           end
+          # destroy all his relationships with subordinates
+          self.active_relationships.destroy_all
+          # destroy his active relationship with superior
+          superior.active_relationships.where(subordinate: self).destroy_all
 
+          # PHASE 3 - Create new hierarchy structure
+          # Check if superior has a remaining subordinate
+          superior_subs = superior.active_relationships
+          # if he has then see who is the oldest one
+          new_director = superior.active_relationships.includes(:subordinate).order("politicians.starting_date ASC").first.subordinate
+          # for the oldest superior assign new relationships with subs_ids
           sub_ids.each do |id|
-            # establish the new relationships for the new director
-            new_director.active_relationships.create(subordinate_id: id)
+            new_director.add_subordinate(Politician.find(id))
           end
         end
+
       end
 
       def set_unlocked
         sub_ids = []
         superior_id = nil
+
+        byebug
 
         OldReplica.where(politician: self).each do |replica|
           if replica.subordinate.nil?
@@ -170,3 +149,6 @@ class Politician < ApplicationRecord
       end
 
 end
+
+
+
