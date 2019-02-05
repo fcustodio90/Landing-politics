@@ -46,7 +46,9 @@
           <div class="col-lg-3 col-md-6 col-xs-12">
             <div class="politician-stat">
               <h2><%= relationship.subordinate.name %></h2>
-              <p><%= pluralize(relationship.subordinate.active_relationships.count, 'subordinate') %></p>
+              <% if !relationship.subordinate.active_relationships.empty? %>
+                <p><%= pluralize(relationship.subordinate.active_relationships.count, 'subordinate') %></p>
+              <% end %>
               <%= link_to 'Know more', politician_path(relationship.subordinate) %>
             </div>
           </div>
