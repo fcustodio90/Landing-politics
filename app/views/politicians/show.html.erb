@@ -5,7 +5,7 @@
     <h2 class="h1"> <%= @politician.name %></h2>
       <% if @politician.is_locked?  %>
         <%= button_to('unlock', unlock_path(@politician), :method => :get, class: 'btn btn-hero btn-sm') %>
-     <!--<% else %> <%# elsif @politician.active_relationships.count >= 20 %> -->
+      <% elsif @politician.active_relationships.count >= 20 %>
         <%= button_to('lock', lock_path(@politician), :method => :get, class: 'btn btn-hero btn-sm') %>
       <% end %>
     <%= link_to 'Go back', root_path %>

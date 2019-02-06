@@ -69,17 +69,22 @@ class Politician < ApplicationRecord
 
       def set_locked
 
+        # this means he is the boss
         if superior.nil?
+          # get his subs
           sub_ids = self.subordinates_ids
 
+          # get the new director
           new_director = self.sorted_subs.first.subordinate
 
           sub_ids.each do |id|
             OldReplica.create(superior: nil, subordinate: id, politician_id: self.id)
           end
 
+          # destroy all his relations
           self.active_relationships.destroy_all
 
+          # escape condition in case there's only one remaining
           if Relationship.first.nil?
             sub_ids.each do |id|
               if !(id == new_director.id)
@@ -89,7 +94,6 @@ class Politician < ApplicationRecord
           end
 
         else
-
           # get his subs
           sub_ids = self.subordinates_ids
 
@@ -107,7 +111,7 @@ class Politician < ApplicationRecord
             superior.active_relationships.where(subordinate: self).destroy_all
 
           else
-
+            # he has subs and doesnt sit in the bottom of the pyramid
             sub_ids.each do |id|
               OldReplica.create(superior: superior.id, subordinate: id, politician_id: self.id)
             end
@@ -123,34 +127,49 @@ class Politician < ApplicationRecord
             self.active_relationships.destroy_all
             superior.active_relationships.where(subordinate: self).destroy_all
           end
-
         end
-
       end
 
       def set_unlocked
 
+        # set variables that will be mutable
         superior = nil
+
         sub_ids = []
 
         OldReplica.where(politician: self).each do |replica|
+          # this means he was superior before going to jail
           if replica.superior.nil?
+
+            # destroy all active relationships
+            Relationship.where(subordinate: replica.subordinate).destroy_all
+            #Politician.find(replica.subordinate).active_relationships.destroy_all
+
+            # establish the new relations again if they aren't locked
             self.add_subordinate(Politician.find(replica.subordinate)) if !Politician.find(replica.subordinate).is_locked?
+
             OldReplica.where(politician: self).destroy_all
+
           else
+            # get the superior
             superior = Politician.find(replica.superior)
+
+            # get the subs
             sub_ids << replica.subordinate if !replica.subordinate.nil? && !Politician.find(replica.subordinate).is_locked?
           end
         end
 
-
+        # check if self is not the superior
         if !superior.nil?
 
+          # check if superior is not locked
           if !superior.is_locked?
-            byebug
 
+
+            # add himself to superior
             superior.add_subordinate(self)
 
+            # add subs to self
             sub_ids.each do |id|
               superior.active_relationships.where(subordinate: id).destroy_all
               self.add_subordinate(Politician.find(id))
@@ -160,16 +179,24 @@ class Politician < ApplicationRecord
 
           else
 
-            new_superior = Politician.find(OldReplica.where(politician: superior).last.superior)
+            if OldReplica.where(politician: superior).last.superior.nil?
+              sub_ids.each do |id|
+                subordinate = Politician.find(id)
+                subordinate.active_relationships.destroy_all
+                self.add_subordinate(subordinate)
 
-            new_superior.add_subordinate(self)
+              end
+            else
+              new_superior = Politician.find(OldReplica.where(politician: superior).last.superior)
+              # set the new subordinates
+              new_superior.add_subordinate(self)
 
+            end
             OldReplica.where(politician: self).destroy_all
 
           end
         end
       end
-
 end
 
 
