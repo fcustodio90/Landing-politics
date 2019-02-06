@@ -4,6 +4,7 @@ class CreatePoliticians < ActiveRecord::Migration[5.2]
       t.string :name
       t.date :starting_date
 
+
       t.timestamps
     end
   end
