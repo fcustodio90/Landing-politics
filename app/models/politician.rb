@@ -25,6 +25,10 @@ class Politician < ApplicationRecord
     active_relationships.pluck('subordinate_id')
   end
 
+  def sorted_subs
+    active_relationships.includes(:subordinate).order("politicians.starting_date ASC")
+  end
+
   def event_locked
     events.create(date: Date.today, locked: true)
   end
@@ -64,88 +68,106 @@ class Politician < ApplicationRecord
   private
 
       def set_locked
-        # PHASE 1 check if he is the top superior
 
         if superior.nil?
           sub_ids = self.subordinates_ids
 
-          hierarchy_array = self.active_relationships.includes(:subordinate).order("politicians.starting_date ASC")
+          new_director = self.sorted_subs.first.subordinate
 
-          new_director = hierarchy_array.first.subordinate
-
-          new_oldest_subordinate = hierarchy_array.second.subordinate
-
-          sub_ids.each do |subordinate|
-            OldReplica.create(superior: nil, subordinate: subordinate, politician_id: self.id)
+          sub_ids.each do |id|
+            OldReplica.create(superior: nil, subordinate: id, politician_id: self.id)
           end
 
-          new_director.active_relationships.each do |relationship|
-            relationship.update_attribute(:superior, new_oldest_subordinate)
-          end
-
-          new_director.add_subordinate(new_oldest_subordinate)
-
-          # destroy all active relationships
           self.active_relationships.destroy_all
-        else
-          # PHASE 2 - Destroy everything associated with self
-          # Check who is his superior
-          superior = self.superior
-          # Check who are his subordinates
-          sub_ids = self.subordinates_ids
-          # Create a replica of his superior and subordinates at the moment he is locked
-          if sub_ids.empty?
-            OldReplica.create(superior: superior.id, subordinate: nil, politician_id: self.id)
-          else
-            sub_ids.each do |subordinate|
-              OldReplica.create(superior: superior.id,
-                                subordinate: subordinate, politician_id: self.id)
+
+          if Relationship.first.nil?
+            sub_ids.each do |id|
+              if !(id == new_director.id)
+                new_director.add_subordinate(Politician.find(id))
+              end
             end
           end
-          # destroy all his relationships with subordinates
-          self.active_relationships.destroy_all
-          # destroy his active relationship with superior
-          superior.active_relationships.where(subordinate: self).destroy_all
 
-          # PHASE 3 - Create new hierarchy structure
-          # Check if superior has a remaining subordinate
-          superior_subs = superior.active_relationships
-          # if he has then see who is the oldest one
-          new_director = superior.active_relationships.includes(:subordinate).order("politicians.starting_date ASC").first.subordinate
-          # for the oldest superior assign new relationships with subs_ids
-          sub_ids.each do |id|
-            new_director.add_subordinate(Politician.find(id))
+        else
+
+          # get his subs
+          sub_ids = self.subordinates_ids
+
+          # get his superior
+          superior = self.superior
+
+          # check if subs are empty
+          # if subs are empty it means he stays in the bottom of the pyramid and has no subordinates
+
+          if sub_ids.empty?
+            # create a back of his relationships at the current date
+            OldReplica.create(superior: superior.id, subordinate: nil, politician_id: self.id)
+
+            # destroy his relationship to the superior
+            superior.active_relationships.where(subordinate: self).destroy_all
+
+          else
+
+            sub_ids.each do |id|
+              OldReplica.create(superior: superior.id, subordinate: id, politician_id: self.id)
+            end
+
+            # time to assign his subs to his superior
+
+            sub_ids.each do |id|
+              superior.add_subordinate(Politician.find(id))
+            end
+
+            #destroy current relations
+
+            self.active_relationships.destroy_all
+            superior.active_relationships.where(subordinate: self).destroy_all
           end
+
         end
 
       end
 
       def set_unlocked
-        sub_ids = []
-        superior_id = nil
 
-        byebug
+        superior = nil
+        sub_ids = []
 
         OldReplica.where(politician: self).each do |replica|
-          if replica.subordinate.nil?
-            superior_id = replica.superior
+          if replica.superior.nil?
+            self.add_subordinate(Politician.find(replica.subordinate)) if !Politician.find(replica.subordinate).is_locked?
+            OldReplica.where(politician: self).destroy_all
           else
-            if !Politician.find(replica.subordinate).is_locked?
-              sub_ids << replica.subordinate
-              superior_id = replica.superior
-            end
+            superior = Politician.find(replica.superior)
+            sub_ids << replica.subordinate if !replica.subordinate.nil? && !Politician.find(replica.subordinate).is_locked?
           end
         end
 
-        sub_ids.each do |id|
-          Relationship.where(subordinate: id).destroy_all
-        end
 
-        sub_ids.each do |id|
-          self.add_subordinate(Politician.find(id))
+        if !superior.nil?
+
+          if !superior.is_locked?
+            byebug
+
+            superior.add_subordinate(self)
+
+            sub_ids.each do |id|
+              superior.active_relationships.where(subordinate: id).destroy_all
+              self.add_subordinate(Politician.find(id))
+            end
+
+            OldReplica.where(politician: self).destroy_all
+
+          else
+
+            new_superior = Politician.find(OldReplica.where(politician: superior).last.superior)
+
+            new_superior.add_subordinate(self)
+
+            OldReplica.where(politician: self).destroy_all
+
+          end
         end
-        Politician.find(superior_id).add_subordinate(self)
-        OldReplica.where(politician: self).destroy_all
       end
 
 end

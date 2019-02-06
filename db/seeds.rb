@@ -1,45 +1,22 @@
-x = Date.today - 10000
+puts 'CREATING POLITICIANS'
 
-puts "---------Creating politicians------------"
-puts "-----------------------------------------"
-
-39.times do
-  x += 270
-  politician = Politician.create(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}", starting_date: x)
-  puts "#{politician.name}, in service since: #{politician.starting_date} created!"
-end
-
-puts "-------------#{Politician.count} politicians created---------------"
-
-puts "---------Creating Relationships------------"
-puts "-----------------------------------------"
-
-def set_relation(superior, array)
-
-  array.each do |relationship|
-    Politician.find(superior).active_relationships.create(subordinate_id: Politician.find(relationship).id)
-  end
-end
-
-array_one = (2..3).to_a
-array_two = (4..6).to_a
-array_three = (7..9).to_a
-array_four = (10..29).to_a
-array_five = (30..31).to_a
-array_six = (32..32).to_a
-array_seven = (33..36).to_a
-array_eight = (37..38).to_a
-array_nine = (39..39).to_a
+puts "--------CEO---------"
+Politician.create(name: 'trump', starting_date: "19/01/1955")
 
 
-set_relation(1, array_one)
-set_relation(2, array_two)
-set_relation(3, array_three)
-set_relation(4, array_four)
-set_relation(5, array_five)
-set_relation(6, array_six)
-set_relation(7, array_seven)
-set_relation(8, array_eight)
-set_relation(9, array_nine)
+puts "--------TIER 1 SUBORDINATES-----------"
+Politician.create(name: 'Obama', starting_date: "05/02/1995")
 
-puts "-------------Relationships Created---------------"
+puts "--------TIER 2 SUBORDINATES-----------"
+Politician.create(name: 'ze1', starting_date: "03/09/1996")
+Politician.create(name: 'ze2', starting_date: "03/02/1997")
+
+
+puts "CREATING RELATIONSHIPS"
+
+puts "CREATING TIER 1 RELATIONSHIPS"
+Politician.find(1).active_relationships.create(subordinate_id: Politician.find(2).id)
+
+puts "CREATING TIER 2 RELATIONSHIPS"
+Politician.find(2).active_relationships.create(subordinate_id: Politician.find(3).id)
+Politician.find(2).active_relationships.create(subordinate_id: Politician.find(4).id)

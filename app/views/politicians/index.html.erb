@@ -17,18 +17,18 @@
   </div>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-4 col-md-4 col-xs-12">
-        <div class="politician-stat">
-          <% @politicians.each do |politician|%>
-            <% if politician.superior.nil? && !politician.is_locked? %>
+      <% @politicians.each do |politician|%>
+        <% if politician.superior.nil? && !politician.is_locked? %>
+          <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="politician-stat">
               <% politician_boss = politician %>
               <h2><%= politician.name %></h2>
               <p><%= pluralize(politician.active_relationships.count, 'subordinate') %></p>
               <%= link_to 'Know more', politician_path(politician) %>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </section>
